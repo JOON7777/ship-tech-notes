@@ -8334,7 +8334,7 @@ E = L(B+T) + 0.85L(D−T) + 0.85Σl₁h₁ + 0.75Σl₂h₂</div>
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){cur=e.target.id; clearTimeout(t); t=setTimeout(function(){s('app-last',cur);},800);}});},{rootMargin:'-35% 0px -60% 0px'});
     document.querySelectorAll('article.q').forEach(function(a){io.observe(a);});
   }
-  function go(id){var el=document.getElementById(id); if(el){el.scrollIntoView({block:'start'}); history.replaceState(null,'','#'+id);}}
+  function go(id){var el=document.getElementById(id); if(el){cur=id; el.scrollIntoView({block:'start',behavior:'instant'}); history.replaceState(null,'','#'+id);}}
   function titleOf(id){var a=document.getElementById(id); if(!a) return ''; var n=a.querySelector('.qn'), h=a.querySelector('h3'); return (n?n.textContent+' ':'')+(h?h.textContent:'');}
   var toast=document.getElementById('toast');
   function hideToast(){toast.classList.remove('on');}
