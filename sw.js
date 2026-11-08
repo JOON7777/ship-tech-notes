@@ -1,5 +1,5 @@
 // offline cache for 조선 기술 노트
-const V = 'stn-202611082140';
+const V = 'stn-202611082211';
 const SHELL = ['./', 'index.html', 'exam.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

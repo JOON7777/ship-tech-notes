@@ -711,7 +711,7 @@ function statsView(){tabsOn('stats'); var s=stats(), dd=dday(), ph=phase(dd), ma
 function settings(){tabsOn('set'); var th=root.getAttribute('data-theme')||'auto';
   function sg(id,opts,cur){return '<span class="sg" id="'+id+'">'+opts.map(function(o){return '<button type="button" data-v="'+o[0]+'" aria-pressed="'+(String(cur)===String(o[0]))+'">'+o[1]+'</button>';}).join('')+'</span>';}
   V.innerHTML='<div class="v"><div class="hd"><h1><span class="sub">SETTINGS</span>설정</h1></div><div class="list">'
-   +'<div class="set"><span>화면 모습<small>'+(ED==='exam'?'지금: 원본 (기출 교본)':'지금: 교육자료')+'</small></span><button class="btn2" type="button" id="swap">'+esc(L.other)+'</button></div>'
+   +(window.__single?'':'<div class="set"><span>화면 모습<small>'+(ED==='exam'?'지금: 원본 (기출 교본)':'지금: 교육자료')+'</small></span><button class="btn2" type="button" id="swap">'+esc(L.other)+'</button></div>')
    +(isLocal?'<div class="set"><span>PC 파일로 보는 중<small>기록은 이 PC의 이 브라우저에 저장됩니다</small></span><span class="muted">✓</span></div>':'<div class="set"><span>앱으로 설치<small>'+(isStandalone()?'설치된 앱으로 보는 중입니다':'홈 화면에 아이콘 추가')+'</small></span>'+(isStandalone()?'<span class="muted">✓</span>':'<button class="btn2 pri" type="button" data-install>설치</button>')+'</div>')
    +'<div class="set"><span>테마</span>'+sg('sth',[['auto','자동'],['light','밝게'],['dark','어둡게']],th)+'</div>'
    +'<div class="set"><span>글자 크기</span>'+sg('sfs',[[0,'1'],[1,'2'],[2,'3'],[3,'4'],[4,'5']],fsz)+'</div>'
@@ -721,8 +721,8 @@ function settings(){tabsOn('set'); var th=root.getAttribute('data-theme')||'auto
    +'<div class="sec">기록 옮기기<small>폰 ↔ PC</small></div><section class="card"><p class="help" style="margin-top:0">기록은 이 기기에만 저장됩니다. 다른 기기로 옮기려면 코드를 복사해서 그 기기의 이 화면에 붙여 넣고 [코드로 복원]을 누르세요.</p>'
    +'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2 pri" type="button" id="bk">백업 코드 복사</button><button class="btn2" type="button" id="rs">코드로 복원</button></div><textarea class="code" id="code" placeholder="여기에 백업 코드" aria-label="백업 코드"></textarea></section>'
    +'<div class="sec">초기화</div><section class="card"><button class="btn2 dan" type="button" id="rst">모든 학습 기록 지우기</button><p class="help" id="rstm"></p></section>'
-   +'<p class="help">'+esc(L.title)+' · 주제 '+N+'개 · 버전 202611082140</p></div>';
-  document.getElementById('swap').onclick=function(){save('app-view',ED==='exam'?'edu':'exam'); location.href=(ED==='exam'?'index.html':'exam.html')+'?stay#/set';};
+   +'<p class="help">'+esc(L.title)+' · 주제 '+N+'개 · 버전 202611082211</p></div>';
+  var swb=document.getElementById('swap'); if(swb) swb.onclick=function(){save('app-view',ED==='exam'?'edu':'exam'); location.href=(ED==='exam'?'index.html':'exam.html')+'?stay#/set';};
   [].forEach.call(document.querySelectorAll('#sth button'),function(b){b.onclick=function(){var v=b.getAttribute('data-v');
     if(v==='auto'){root.removeAttribute('data-theme'); try{localStorage.removeItem('pe-theme');}catch(e){}} else {root.setAttribute('data-theme',v); try{localStorage.setItem('pe-theme',v);}catch(e){}} settings();};});
   [].forEach.call(document.querySelectorAll('#sfs button'),function(b){b.onclick=function(){fsz=+b.getAttribute('data-v'); save('app-fs',fsz); applyFs(); settings();};});
