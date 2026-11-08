@@ -13,8 +13,9 @@
 <script>
 (function(){
   var me=location.pathname.indexOf('exam.html')>=0?'exam':'edu', pref='edu';
-  try{pref=localStorage.getItem('app-view')||'edu';}catch(e){}
-  if(pref!==me && !/[?&]stay/.test(location.search)) location.replace((pref==='exam'?'exam.html':'./')+(location.hash||''));
+  try{pref=String(localStorage.getItem('app-view')||'edu').replace(/"/g,'');}catch(e){}
+  if(pref!=='exam') pref='edu';
+  if(pref!==me && !/[?&]stay/.test(location.search)) location.replace((pref==='exam'?'exam.html':'index.html')+(location.hash||''));
   window.__bip=null;
   window.addEventListener('beforeinstallprompt',function(e){e.preventDefault(); window.__bip=e; document.dispatchEvent(new Event('bip'));});
 })();
@@ -514,6 +515,14 @@ details.mwrap .mtitle{display:none}
 .sheet2 .steps{padding-left:22px;margin:6px 0}
 .sheet2 .steps li{margin:6px 0}
 .kbd{display:inline-block;border:1px solid var(--rule);border-radius:5px;padding:0 6px;font-size:13px;background:var(--paper)}
+/* wide screens (PC): keep bars aligned with the reading column */
+@media (min-width:700px){
+  .tabs,.tb{max-width:680px;margin:0 auto;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-radius:14px 14px 0 0}
+}
+@media (min-width:1000px){
+  #app{max-width:760px}
+  .tabs,.tb{max-width:760px}
+}
 
 </style>
 </head>
@@ -609,7 +618,8 @@ var isIOS=/iPhone|iPad|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigat
 var isAndroid=/Android/i.test(UA);
 var isKakao=/KAKAOTALK/i.test(UA);
 var inApp=isKakao||/NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|BAND\//i.test(UA);
-function installBanner(){if(isStandalone()) return ''; var later=load('app-inst-later',0); if(later&&Date.now()<later) return '';
+var isLocal=location.protocol==='file:';
+function installBanner(){if(isStandalone()||isLocal) return ''; var later=load('app-inst-later',0); if(later&&Date.now()<later) return '';
   return '<section class="card inst"><img src="icons/icon-192.png" alt="" width="52" height="52"><div><b>앱으로 설치하기</b>'
    +'<small>홈 화면에 아이콘이 생기고 주소창 없이 바로 열립니다. 한 번 열어 두면 인터넷 없이도 볼 수 있습니다.</small>'
    +'<div class="instb"><button class="btn2 pri" type="button" data-install>'+(window.__bip?'설치하기':'설치 방법 보기')+'</button><button class="btn2" type="button" data-later>나중에</button></div></div></section>';}
@@ -733,7 +743,7 @@ function settings(){tabsOn('set'); var th=root.getAttribute('data-theme')||'auto
   function sg(id,opts,cur){return '<span class="sg" id="'+id+'">'+opts.map(function(o){return '<button type="button" data-v="'+o[0]+'" aria-pressed="'+(String(cur)===String(o[0]))+'">'+o[1]+'</button>';}).join('')+'</span>';}
   V.innerHTML='<div class="v"><div class="hd"><h1><span class="sub">SETTINGS</span>설정</h1></div><div class="list">'
    +'<div class="set"><span>화면 모습<small>'+(ED==='exam'?'지금: 원본 (기출 교본)':'지금: 교육자료')+'</small></span><button class="btn2" type="button" id="swap">'+esc(L.other)+'</button></div>'
-   +'<div class="set"><span>앱으로 설치<small>'+(isStandalone()?'설치된 앱으로 보는 중입니다':'홈 화면에 아이콘 추가')+'</small></span>'+(isStandalone()?'<span class="muted">✓</span>':'<button class="btn2 pri" type="button" data-install>설치</button>')+'</div>'
+   +(isLocal?'<div class="set"><span>PC 파일로 보는 중<small>기록은 이 PC의 이 브라우저에 저장됩니다</small></span><span class="muted">✓</span></div>':'<div class="set"><span>앱으로 설치<small>'+(isStandalone()?'설치된 앱으로 보는 중입니다':'홈 화면에 아이콘 추가')+'</small></span>'+(isStandalone()?'<span class="muted">✓</span>':'<button class="btn2 pri" type="button" data-install>설치</button>')+'</div>')
    +'<div class="set"><span>테마</span>'+sg('sth',[['auto','자동'],['light','밝게'],['dark','어둡게']],th)+'</div>'
    +'<div class="set"><span>글자 크기</span>'+sg('sfs',[[0,'1'],[1,'2'],[2,'3'],[3,'4'],[4,'5']],fsz)+'</div>'
    +'<div class="set"><span>목표일<small>D-day와 100일 계획 기준</small></span><input type="date" id="sex" value="'+exam+'" aria-label="목표일"></div></div>'
@@ -742,8 +752,8 @@ function settings(){tabsOn('set'); var th=root.getAttribute('data-theme')||'auto
    +'<div class="sec">기록 옮기기<small>폰 ↔ PC</small></div><section class="card"><p class="help" style="margin-top:0">기록은 이 기기에만 저장됩니다. 다른 기기로 옮기려면 코드를 복사해서 그 기기의 이 화면에 붙여 넣고 [코드로 복원]을 누르세요.</p>'
    +'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2 pri" type="button" id="bk">백업 코드 복사</button><button class="btn2" type="button" id="rs">코드로 복원</button></div><textarea class="code" id="code" placeholder="여기에 백업 코드" aria-label="백업 코드"></textarea></section>'
    +'<div class="sec">초기화</div><section class="card"><button class="btn2 dan" type="button" id="rst">모든 학습 기록 지우기</button><p class="help" id="rstm"></p></section>'
-   +'<p class="help">'+esc(L.title)+' · 주제 '+N+'개 · 버전 202611071401</p></div>';
-  document.getElementById('swap').onclick=function(){save('app-view',ED==='exam'?'edu':'exam'); location.href=(ED==='exam'?'./':'exam.html')+'?stay#/set';};
+   +'<p class="help">'+esc(L.title)+' · 주제 '+N+'개 · 버전 202611082140</p></div>';
+  document.getElementById('swap').onclick=function(){save('app-view',ED==='exam'?'edu':'exam'); location.href=(ED==='exam'?'index.html':'exam.html')+'?stay#/set';};
   [].forEach.call(document.querySelectorAll('#sth button'),function(b){b.onclick=function(){var v=b.getAttribute('data-v');
     if(v==='auto'){root.removeAttribute('data-theme'); try{localStorage.removeItem('pe-theme');}catch(e){}} else {root.setAttribute('data-theme',v); try{localStorage.setItem('pe-theme',v);}catch(e){}} settings();};});
   [].forEach.call(document.querySelectorAll('#sfs button'),function(b){b.onclick=function(){fsz=+b.getAttribute('data-v'); save('app-fs',fsz); applyFs(); settings();};});
